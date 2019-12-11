@@ -1,6 +1,6 @@
 module algo
 
-export read_data, random_walk, runrandomwalk, absorbingrandomwalk, findreviewers
+export read_data, random_walk, runrandomwalk, runrandomwalkfor2, absorbingrandomwalk, findreviewers
 
 using LightGraphs
 using StatsBase
@@ -25,46 +25,32 @@ function simple_random_walk(g::SimpleGraph, start_edge::Int64, numberOfSteps::In
 	current_edge = start_edge
 	for i in 1 : numberOfSteps
 		NeighborsOfVertex = neighbors(g,current_edge)
-		#println(NeighborsOfVertex)
 		a = rand(1:length(NeighborsOfVertex))
-		#println(a)
 		current_edge = NeighborsOfVertex[a]
-		#println(current_edge)
 	end
 return current_edge
 end
 
-function random_walk(g::SimpleGraph, start_edge::Int64, numberOfSteps::Int64,prob::Float64)
+function random_walk(g::SimpleGraph, start_edge::Int64, numberOfSteps::Int64, prob::Float64)
 	current_edge = start_edge
 	NeighborsOfStart = neighbors(g,current_edge)
-	while true
-		a = rand(1:length(NeighborsOfStart))
-		current_edge = NeighborsOfStart[a]
-		NeighborsOfVertex = neighbors(g,current_edge)
-		a = rand(1:length(NeighborsOfVertex))
-		current_edge = NeighborsOfVertex[a]
-		if !(current_edge in NeighborsOfStart)
-			break
-		end
-	end
 	for i in 1 : numberOfSteps
-		if (rand() < prob)
-			while true
-				a = rand(1:length(NeighborsOfStart))
-				current_edge = NeighborsOfStart[a]
-				NeighborsOfVertex = neighbors(g,current_edge)
-				a = rand(1:length(NeighborsOfVertex))
-				current_edge = NeighborsOfVertex[a]
-				if !(current_edge in NeighborsOfStart) && current_edge !=1
-					break
-				end
-			end
+		if (rand() > prob)
+			current_edge = start_edge
 		else
+			NeighborsOfVertex = neighbors(g,current_edge)
+			a = rand(1:length(NeighborsOfVertex))
+			current_edge = NeighborsOfVertex[a]
+			if !(current_edge in NeighborsOfStart)  && current_edge !=start_edge
+				break
+			end
+		end
+		if (current_edge == start_edge || current_edge in NeighborsOfStart)
 			while true
 				NeighborsOfVertex = neighbors(g,current_edge)
 				a = rand(1:length(NeighborsOfVertex))
 				current_edge = NeighborsOfVertex[a]
-				if !(current_edge in NeighborsOfStart)  && current_edge !=1
+				if !(current_edge in NeighborsOfStart) && current_edge !=start_edge
 					break
 				end
 			end
@@ -74,18 +60,44 @@ return current_edge
 end
 
 function runrandomwalk(g::SimpleGraph,start_edge::Int64, numberOfSteps::Int64,howManyTimes::Int64,prob::Float64)
-	x = Vector{Float64}()
-	append!(x, rand(10))
+	x = Vector{Int64}()
 	for i in 1:howManyTimes
-		proposition = random_walk(g, start_edge , numberOfSteps , prob::Float64)
+		proposition = random_walk(g, start_edge , numberOfSteps , prob)
 		append!(x, proposition)
 		#println(proposition)
 		#enumerate_paths(dijkstra_shortest_paths(g, 1), proposition)
 		#println()
 	end
-	return x
+	d = countmap(x)
+	return OrderedDict(sort(collect(d), by=x->x[2], rev=true))
 end
 
+function runrandomwalkfor2(g::SimpleGraph, firstScientist::Int64, secondScientist, numberOfSteps::Int64, howManyTimes::Int64, prob::Float64)
+	x1=runrandomwalk(g, firstScientist, 20, 1000,0.85)
+	x2=runrandomwalk(g, secondScientist, 20, 1000,0.85)
+	ranking = Vector{Int64}()
+	println(collect(x1)[1:20])
+	println()
+	println(collect(x2)[1:20])
+	println()
+	println()
+	println()
+	for d in collect(x1)[1:100]
+		lengthto1 = length(enumerate_paths(dijkstra_shortest_paths(g, firstScientist), d.first))
+		lengthto2 = length(enumerate_paths(dijkstra_shortest_paths(g, secondScientist),  d.first))
+		println(d," ",lengthto1+lengthto2)
+	end
+	for d in collect(x2)[1:100]
+		lengthto1 = length(enumerate_paths(dijkstra_shortest_paths(g, firstScientist),  d.first))
+		lengthto2 = length(enumerate_paths(dijkstra_shortest_paths(g, secondScientist),  d.first))
+		println(d," ",lengthto1+lengthto2)
+	end
+	println()
+	println()
+	println(ranking)
+end
+
+#list of scientists and reviewers
 function absorbingrandomwalk(g::SimpleGraph,scientist::Int64,reviewers::Array{Int64,1})
 	current_edge = scientist
 	while true
@@ -100,14 +112,14 @@ function absorbingrandomwalk(g::SimpleGraph,scientist::Int64,reviewers::Array{In
 end
 
 function findreviewers(g::SimpleGraph,scientists::Array{Int64,1},reviewers::Array{Int64,1},howManyTimes::Int64)
-	x = Vector{Float64}()
-	append!(x, rand(10))
+	x = Vector{Int64}()
 	for i in 1: howManyTimes
 		proposition = absorbingrandomwalk(g, scientists[1], reviewers)
 		append!(x, proposition)
 	end
 	d = countmap(x)
 	println(OrderedDict(sort(collect(d), by=x->x[2], rev=true)))
+
 end
 
 end
