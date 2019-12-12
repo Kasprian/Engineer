@@ -1,10 +1,11 @@
 include("algo.jl")
 using .algo
-using LightGraphs
+using LightGraphs, SimpleWeightedGraphs
 using StatsBase
 using DataStructures
 using FreqTables
 g = read_data("out.pajek-erdos")
+
 #println(diameter(g))
 #print(collect(edges(g)))
 #Test nr 1 pojedynczy przypadek
