@@ -6,4 +6,6 @@ using StatsBase
 using DataStructures
 using FreqTables
 g = read_data("powiązania")
-random_walk(g,1,10,0.85)
+println(runrandomwalk(g, 18, 10, 1000,0.85))
+#println(b)
+#runrandomwalkfor2(g, 1, 32, 9, 1000,0.85)

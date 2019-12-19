@@ -1,23 +1,36 @@
 module wpptdata
 
-export read_data, random_walk, runrandomwalk, runrandomwalkfor2, absorbingrandomwalk, findreviewers
+export read_data, random_walk, runrandomwalk, runrandomwalkfor2, absorbingrandomwalk, findreviewers, makestep
 
 using LightGraphs, SimpleWeightedGraphs
 using StatsBase
 using DataStructures
 
-function read_data(file_path::String)
-	open(file_path) do file
+function read_data(correlation_file::String)
+	open(correlation_file) do file
 		ln = split(readline(file))
-		g = SimpleWeightedGraph(parse(Int64, ln[1]));
+		numberofUsers=parse(Int64, ln[1])
+		g = SimpleWeightedGraph(numberofUsers+8)
 		while !eof(file)
 			ln = split(readline(file))
 			n1 = parse(Int64, ln[1])
 			n2 = parse(Int64, ln[2])
 			w = parse(Int64, ln[3])
-			add_edge!(g, n1, n2,w)
+			if w == 0
+				sum = 0
+				for i in neighbors(g,n2)
+					if i <= numberofUsers
+						sum = sum + g.weights[n2, i]
+					end
+				end
+				w = sum
+				if w == 0
+					w = 1
+				end
+			end
+			add_edge!(g, n1, n2, w)
 		end
-	return g
+		return g
 	end
 end
 
@@ -32,6 +45,28 @@ function simple_random_walk(g::SimpleWeightedGraph, start_edge::Int64, numberOfS
 return current_edge
 end
 
+function makestep(g::SimpleWeightedGraph, current_edge::Int64)
+	NeighborsOfVertex = neighbors(g,current_edge)
+	sum = 0
+	for i in NeighborsOfVertex
+			sum = sum + g.weights[current_edge, i]
+	end
+	chance = rand()
+	if chance === 0.0
+	chance = 1.0
+	end
+	current = 0
+	for i in NeighborsOfVertex
+		current  = current  + g.weights[current_edge, i]
+		if chance <= (current/sum)
+			current_edge = i
+			break
+		end
+	end
+	return current_edge
+end
+
+
 function random_walk(g::SimpleWeightedGraph, start_edge::Int64, numberOfSteps::Int64, prob::Float64)
 	current_edge = start_edge
 	NeighborsOfStart = neighbors(g,current_edge)
@@ -39,36 +74,16 @@ function random_walk(g::SimpleWeightedGraph, start_edge::Int64, numberOfSteps::I
 		if (rand() > prob)
 			current_edge = start_edge
 		else
-			NeighborsOfVertex = neighbors(g,current_edge)
-			a = rand(1:length(NeighborsOfVertex))
-			sum = 0
-			for i in NeighborsOfVertex
-					sum = sum + g.weights[current_edge, i]
-			end
-			chance = rand()
-			if chance === 0.0
-    		chance = 1.0
-			end
-			current = 0
-			i = 1
-			while chance > (current/sum)
-				current  = current  + g.weights[current_edge, i]
-				current_edge = NeighborsOfVertex[i]
-			end
+			current_edge = makestep(g,current_edge)
 		end
 	end
-	if (current_edge == start_edge)
-		while true
-			NeighborsOfVertex = neighbors(g,current_edge)
-			a = rand(1:length(NeighborsOfVertex))
-			current_edge = NeighborsOfVertex[a]
-			if !(current_edge in NeighborsOfStart) && current_edge !=start_edge
-				break
-			end
-		end
+	while (current_edge == start_edge || current_edge >28)
+	current_edge=makestep(g,current_edge)
 	end
 return current_edge
 end
+
+
 
 function runrandomwalk(g::SimpleWeightedGraph, start_edge::Int64, numberOfSteps::Int64, howManyTimes::Int64, prob::Float64)
 	x = Vector{Int64}()
@@ -89,20 +104,7 @@ function runrandomwalkfor2(g::SimpleWeightedGraph, firstScientist::Int64, second
 	println(collect(x2)[1:20])
 	println()
 	println()
-	println()
-	for d in collect(x1)[1:100]
-		lengthto1 = length(enumerate_paths(dijkstra_shortest_paths(g, firstScientist), d.first))
-		lengthto2 = length(enumerate_paths(dijkstra_shortest_paths(g, secondScientist),  d.first))
-		println(d," ",lengthto1+lengthto2)
-	end
-	for d in collect(x2)[1:100]
-		lengthto1 = length(enumerate_paths(dijkstra_shortest_paths(g, firstScientist),  d.first))
-		lengthto2 = length(enumerate_paths(dijkstra_shortest_paths(g, secondScientist),  d.first))
-		println(d," ",lengthto1+lengthto2)
-	end
-	println()
-	println()
-	println(ranking)
+	println(merge(+,x1,x2))
 end
 
 #list of scientists and reviewers
