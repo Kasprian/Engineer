@@ -1,15 +1,13 @@
 include("algo.jl")
-using .algo
+using .unweightedGraph
 using LightGraphs, SimpleWeightedGraphs
 using StatsBase
 using DataStructures
 using FreqTables
-g = read_data("out.pajek-erdos")
-
-#println(diameter(g))
-#print(collect(edges(g)))
+using TikzPictures
+g = read_data("out.wppt")
 #Test nr 1 pojedynczy przypadek
-println(runrandomwalk(g, 3, 20, 1000,0.85))
+#println(runrandomwalk(g, 3, 20, 1000,0.85))
 
 #neighbors(g,current_edge)
 
@@ -19,4 +17,4 @@ println(runrandomwalk(g, 3, 20, 1000,0.85))
 #enumerate_paths(dijkstra_shortest_paths(g, 1), 10)
 #a = sample(2:317080, 50)
 #println(a)
-#findreviewers(g,[1],a,100)
+#findreviewers(g,[1],[2,7,9],100)
