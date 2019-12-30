@@ -72,7 +72,7 @@ end
 
 #Simulation of one random walk
 
-function random_walk(g::SimpleWeightedGraph, start_edge::Int64, numberOfSteps::Int64, prob::Float64)
+function random_walk(g::SimpleWeightedGraph, start_edge::Int64, numberOfSteps::Int64, prob::Float64, tags::Bool)
 	current_edge = start_edge
 	NeighborsOfStart = neighbors(g,current_edge)
 	for i in 1 : numberOfSteps
@@ -82,7 +82,7 @@ function random_walk(g::SimpleWeightedGraph, start_edge::Int64, numberOfSteps::I
 			current_edge = makestep(g,current_edge)
 		end
 	end
-	while (current_edge == start_edge || current_edge > 28 )
+	while (current_edge == start_edge || (tags && current_edge > 28) )
 	current_edge=makestep(g,current_edge)
 	end
 return current_edge
@@ -92,10 +92,10 @@ end
 #numberOfSteps - number of steps in one random walk
 #prob - probability of returning to start
 
-function runrandomwalk(g::SimpleWeightedGraph, start_edge::Int64, numberOfSteps::Int64, howManyTimes::Int64, prob::Float64)
+function runrandomwalk(g::SimpleWeightedGraph, start_edge::Int64, numberOfSteps::Int64, howManyTimes::Int64, prob::Float64, tags::Bool)
 	x = Vector{Int64}()
 	for i in 1:howManyTimes
-		proposition = random_walk(g, start_edge , numberOfSteps , prob)
+		proposition = random_walk(g, start_edge , numberOfSteps , prob, tags)
 		append!(x, proposition)
 	end
 	d = countmap(x)
@@ -111,39 +111,37 @@ end
 
 #
 
-function runrandomwalkfor2(g::SimpleWeightedGraph, firstScientist::Int64, secondScientist, numberOfSteps::Int64, howManyTimes::Int64, prob::Float64)
-	x1=runrandomwalk(g, firstScientist, 3, 1000,0.85)
-	x2=runrandomwalk(g, secondScientist, 3, 1000,0.85)
-	println(collect(x1))
-	println()
-	println(collect(x2))
-	println()
-	println(OrderedDict{Int64,Float64}(sort(collect(merge(harmonic_mean, x1, x2)), by=x->x[2], rev=true)))
+function runrandomwalkfor2(g::SimpleWeightedGraph, firstScientist::Int64, secondScientist, numberOfSteps::Int64, howManyTimes::Int64, prob::Float64, tags::Bool)
+	x1=runrandomwalk(g, firstScientist, numberOfSteps, howManyTimes, prob, tags)
+	x2=runrandomwalk(g, secondScientist,  numberOfSteps, howManyTimes, prob, tags)
+	!delete(x1,secondScientist)
+	!delete(x2,firstScientist)
+	return OrderedDict{Int64,Float64}(sort(collect(merge(harmonic_mean, x1, x2)), by=x->x[2], rev=true))
 end
 
 
 
-function absorbingrandomwalk(g::SimpleWeightedGraph, scientist::Int64, reviewers::Array{Int64,1})
+function absorbingrandomwalk(g::SimpleWeightedGraph, scientist::Int64, reviewers::Array{Int64,1}, tags::Bool)
 	current_edge = scientist
 	while true
 		NeighborsOfVertex = neighbors(g,current_edge)
 		a = rand(1:length(NeighborsOfVertex))
 		current_edge = NeighborsOfVertex[a]
-		if current_edge in reviewers
+		if (current_edge in reviewers || (tags && current_edge > 28))
 			break
 		end
 	end
 	return current_edge
 end
 
-function findreviewers(g::SimpleWeightedGraph, scientists::Array{Int64,1}, reviewers::Array{Int64,1}, howManyTimes::Int64)
+function findreviewers(g::SimpleWeightedGraph, scientists::Int64, reviewers::Array{Int64,1}, howManyTimes::Int64, tags::Bool)
 	x = Vector{Int64}()
 	for i in 1: howManyTimes
-		proposition = absorbingrandomwalk(g, scientists[1], reviewers)
+		proposition = absorbingrandomwalk(g, scientists, reviewers, tags)
 		append!(x, proposition)
 	end
 	d = countmap(x)
-	println(OrderedDict(sort(collect(d), by=x->x[2], rev=true)))
+	return OrderedDict(sort(collect(d), by=x->x[2], rev=true))
 end
 
 end
