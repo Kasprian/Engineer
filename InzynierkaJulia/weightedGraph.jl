@@ -121,23 +121,23 @@ end
 
 
 
-function absorbingrandomwalk(g::SimpleWeightedGraph, scientist::Int64, reviewers::Array{Int64,1}, tags::Bool)
+function absorbingrandomwalk(g::SimpleWeightedGraph, scientist::Int64, reviewers::Array{Int64,1})
 	current_edge = scientist
 	while true
 		NeighborsOfVertex = neighbors(g,current_edge)
 		a = rand(1:length(NeighborsOfVertex))
 		current_edge = NeighborsOfVertex[a]
-		if (current_edge in reviewers || (tags && current_edge > 28))
+		if (current_edge in reviewers )
 			break
 		end
 	end
 	return current_edge
 end
 
-function findreviewers(g::SimpleWeightedGraph, scientists::Int64, reviewers::Array{Int64,1}, howManyTimes::Int64, tags::Bool)
+function findreviewers(g::SimpleWeightedGraph, scientists::Int64, reviewers::Array{Int64,1}, howManyTimes::Int64)
 	x = Vector{Int64}()
 	for i in 1: howManyTimes
-		proposition = absorbingrandomwalk(g, scientists, reviewers, tags)
+		proposition = absorbingrandomwalk(g, scientists, reviewers)
 		append!(x, proposition)
 	end
 	d = countmap(x)

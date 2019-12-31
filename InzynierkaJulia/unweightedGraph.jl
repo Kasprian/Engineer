@@ -88,23 +88,23 @@ function runrandomwalkfor2(g::SimpleGraph, firstScientist::Int64, secondScientis
 end
 
 #list of scientists and reviewers
-function absorbingrandomwalk(g::SimpleGraph, scientist::Int64, reviewers::Array{Int64,1}, tags::Bool)
+function absorbingrandomwalk(g::SimpleGraph, scientist::Int64, reviewers::Array{Int64,1})
 	current_edge = scientist
 	while true
 		NeighborsOfVertex = neighbors(g,current_edge)
 		a = rand(1:length(NeighborsOfVertex))
 		current_edge = NeighborsOfVertex[a]
-		if (current_edge in reviewers || (tags && current_edge > 28))
+		if (current_edge in reviewers)
 			break
 		end
 	end
 	return current_edge
 end
 
-function findreviewers(g::SimpleGraph, scientists::Array{Int64,1}, reviewers::Array{Int64,1}, howManyTimes::Int64, tags::Bool)
+function findreviewers(g::SimpleGraph, scientists::Int64, reviewers::Array{Int64,1}, howManyTimes::Int64)
 	x = Vector{Int64}()
 	for i in 1: howManyTimes
-		proposition = absorbingrandomwalk(g, scientists[1], reviewers, tags)
+		proposition = absorbingrandomwalk(g, scientists[1], reviewers)
 		append!(x, proposition)
 	end
 	d = countmap(x)

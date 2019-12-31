@@ -20,8 +20,6 @@ for j in collect(runrandomwalk(g, 2, 5, 1000, 0.85, true))[1:5]
 end
 println()
 end
-
-
 println("dr inż. Jakub Lemiesz")
 #Przykład użycia dla dr inż. Jakuba Lemiesza
 for i in 1:3
