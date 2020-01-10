@@ -1,0 +1,20 @@
+\chapter{Instalacja i wdrożenie}
+\thispagestyle{chapterBeginStyle}
+
+%W tym rozdziale należy omówić zawartość pakietu instalacyjnego oraz założenia co do środowiska, w którym realizowany system będzie instalowany. Należy przedstawić procedurę instalacji i wdrożenia systemu. Czynności instalacyjne powinny być szczegółowo rozpisane na kroki. Procedura wdrożenia powinna obejmować konfigurację platformy sprzętowej, OS (np. konfiguracje niezbędnych sterowników) oraz konfigurację wdrażanego systemu, m.in.\ tworzenia niezbędnych kont użytkowników. Procedura instalacji powinna prowadzić od stanu, w którym nie są zainstalowane żadne składniki systemu, do stanu w którym system jest gotowy do pracy i oczekuje na akcje typowego użytkownika.
+
+\section{Wymagania}
+
+Do uruchomienia programu wymagane jest:
+\begin{itemize}
+    \item język Julia w wersji LTS $v1.0.5$,
+    \item pakiet LightGraphs, SimpleWeightedGraphs, StatsBase oraz DataStructures.
+\end{itemize}
+
+\section{Instalacja}
+
+Wszystkie wersje języka Julia gotowe do pobrania znajdują się na \href{https://julialang.org/downloads/}{oficjalnej stronie}. Instalacja pakietów wymagają menadżera pakietów. Aby zainstalować pakiet należy otworzyć REPL, a następnie wpisać komendy:
+\begin{lstlisting}[language=bash]
+    $ using Pkg
+    $ Pkg.add("Nazwa_pakietu").
+\end{lstlisting}

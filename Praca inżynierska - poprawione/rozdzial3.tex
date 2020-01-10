@@ -1,0 +1,151 @@
+\chapter{Testy algorytmów}
+\thispagestyle{chapterBeginStyle}
+
+\section{Przykład użycia}
+
+Celem zobrazowania działania dwóch pierwszych algorytmów zostaną zaprezentowane wyniki wywołań dla dwóch wybranych naukowców z Katedry Informatyki. Program uruchomiono trzykrotnie w celu wyjaśnienia własności silnika rekomendacji. W pierwszej kolejności prezentowane są najlepsze wyniki (ang. \textit{Top-N recommendation}). Wyniki przedstawiono w tabeli \ref{table:1} oraz \ref{table:2}.
+
+\begin{table}[h]
+
+        \centering
+\begin{tabular}{c|c|c|c}
+Miejsce  & Proponowany recenzent &Specjalizacje& Wynik \\  \hline
+\multicolumn{4}{c|}{Iteracja I} \\ \hline
+1&dr inż. Małgorzata Sulkowska&algorytmy, bigdata, programowanie& 100.0 \\
+2&prof. dr hab.Jacek Cichoń & matematyka, bigdata& 95.0 \\
+3&prof. dr hab. Mirosław Kutyłowski&bezpieczeństwo, sieci komputerowe& 86.0 \\
+4&dr inż. Zbigniew Gołębiewski&algorytmy, bazy& 73.0 \\
+5&dr inż. Przemysław Błaśkiewicz&wbudowane, bezpieczeństwo& 69.0 \\ \hline
+\multicolumn{4}{c|}{Iteracja I} \\ \hline
+1&dr inż. Małgorzata Sulkowska&algorytmy, bigdata, programowanie& 90.0 \\
+2&prof. dr hab. Mirosław Kutyłowski&bezpieczeństwo, sieci komputerowe& 88.0 \\
+3&dr inż. Przemysław Błaśkiewicz& wbudowane, bezpieczeństwo&77.0 \\
+4&prof. dr hab. Jacek Cichoń & matematyka, bigdata&71.0 \\
+5&dr inż. Marcin Zawada&programowanie, sieci komputerowe&70.0 \\ \hline
+\multicolumn{4}{c|}{Iteracja I} \\ \hline
+1&prof. dr hab. Jacek Cichoń& matematyka, bigdata&97.0 \\
+2&dr inż. Małgorzata Sulkowska&algorytmy, bigdata, programowanie&86.0 \\
+3&dr inż. Marcin Zawada&programowanie, sieci komputerowe&84.0 \\
+4&prof. dr hab. Mirosław Kutyłowski&bezpieczeństwo, sieci komputerowe& 71.0 \\
+5&dr inż. Przemysław Błaśkiewicz& wbudowane, bezpieczeństwo&69.0 \\ \hline
+
+\end{tabular}
+\caption{Przykład użycia algorytmu numer 1 dla prac z jednym autorem dla dr inż. Jakuba Lemiesza dla którego w ramach modelu zostały przypisane specjalizacje: algorytmy, programowanie i bigdata.}
+
+\label{table:1}
+\end{table}
+\begin{table}[h]
+        \centering
+\begin{tabular}{c|c|c|c}
+Miejsce  & Proponowany recenzent& Specjalizacje & Wynik \\  \hline
+\multicolumn{4}{c|}{Iteracja I} \\ \hline
+1&prof. dr hab. Mirosław Kutyłowski&bezpieczeństwo, sieci komputerowe& 70.0 \\
+2&dr hab. inż. Marek Klonowski&algorytmy, sieci&67.0 \\
+3&dr inż. Przemysław Błaśkiewicz&wbudowane, bezpieczeństwo& 59.0 \\
+4&dr inż. Jakub Lemiesz&algorytmy, programowanie, bigdata& 57.0\\
+5&dr inż. Łukasz Krzywiecki& sieci komputerowe, bezpieczeństwo& 54.0\\  \hline
+\multicolumn{4}{c|}{Iteracja II} \\ \hline
+1&dr hab. inż. Marek Klonowski&algorytmy, sieci&67.0 \\
+2&dr inż. Jakub Lemiesz&algorytmy, programowanie, bigdata& 66.0\\
+3&prof. dr hab. Mirosław Kutyłowski&bezpieczeństwo, sieci komputerowe& 60.0\\
+4&dr hab. Paweł Zieliński&algorytmy, bazy, bigdata& 54.0\\
+5&dr inż. Przemysław Błaśkiewicz&wbudowane, bezpieczeństwo& 54.0\\  \hline
+\multicolumn{4}{c|}{Iteracja III} \\ \hline
+1&dr inż.Jakub Lemiesz&algorytmy, programowanie, bigdata&67.0\\
+2&dr inż. Przemysław Błaśkiewicz&wbudowane, bezpieczeństwo& 65.0\\
+3&dr hab. inż. Marek Klonowski&algorytmy, sieci&64.0\\
+4&prof. dr hab. Mirosław Kutyłowski&bezpieczeństwo, sieci komputerowe&63.0\\
+5&dr inż. Łukasz Krzywiecki& sieci komputerowe, bezpieczeństwo&52.0\\  \hline
+\end{tabular}
+\caption{Przykład użycia algorytmu numer 1 dla prac z jednym autorem dla prof. dr hab. Jacka Cichonia, dla którego dla potrzeb modelu zostały przypisane specjalizacje: algorytmy, matematyka oraz bigdata.}
+\label{table:2}
+\end{table}
+
+Należy zauważyć, że w każdej iteracji zwracane są inne wyniki, lecz proponowane osoby różnią się tylko kolejnością. Osoba, która zajmuje pierwsze miejsce w kolejnym wywołaniu programu nie znajdzie się z tyłu stawki. Na podstawie kilku najwyżej notowanych pozycji można wytyczyć grupę osób, które osiągają podobnie wysokie wyniki.
+
+Kolejną kwestią warta uwagi jest, że przypisane specjalizacje rekomendowanych osób, w dużej mierze pokrywają się z dziedzinami wybranej osoby. Dla dr inż. Jakuba Lemiesz, któremu przypisano algorytmy, programowanie i bigdata, pierwsze i drugie miejsce w zestawieniu zajmuje dr inż. Małgorzata Sulkowska, której przypisano takie same dziedziny informatyki. Trochę inaczej sprawa wygląda dla prof. dr hab. Jacka Cichonia, któremu prezentowane są głównie osoby, które podobnie jak on posiada najwięcej połączeń w grafie. Dzieje sie tak, ponieważ profesor pojawia się w pracach z większością Katedry Informatyki WPPT.
+
+Następnie dla tych samych osób uruchomiono drugi algorytm, który ma za zadanie wyznaczyć wspólne propozycje ze zbioru wyników uzyskanych przy pomocy pierwszego. Zgodnie z założeniem najwyżej punktowane są osoby, które osiągnęły wysokie wyniki u obu osób. Wyniki znajdują się tabelki \ref{table:3}.
+
+\begin{table}[h]
+        \centering
+\begin{tabular}{c|c|c|c}
+Miejsce  & Proponowany recenzent & Specjalizacje&Wynik \\  \hline
+\multicolumn{4}{c|}{Iteracja I} \\ \hline
+1&prof. dr hab. Mirosław Kutyłowski&bezpieczeństwo, sieci komputerowe&  73.22\\
+2&dr hab. inż. Marek Klonowski&algorytmy, sieci&65.86\\
+3&dr inż. Przemysław Błaśkiewicz&wbudowane, bezpieczeństwo&64.61\\
+4&dr inż. Marcin Zawada&programowanie, sieci komputerowe&58.16\\
+5&dr inż. Małgorzata Sulkowska& algorytmy, bigdata, programowanie&55.68\\ \hline
+\multicolumn{4}{c|}{Iteracja I} \\ \hline
+1&dr inż. Małgorzata Sulkowska&algorytmy, bigdata, programowanie& 65.09\\
+2&dr inż. Marcin Zawada&programowanie, sieci komputerowe&62.98\\
+3&prof. dr hab. Mirosław Kutyłowski&bezpieczeństwo, sieci komputerowe&  62.40\\
+4&dr inż. Przemysław Błaśkiewicz&wbudowane, bezpieczeństwo& 56.73\\
+5&dr inż. Zbigniew Gołębiewski&algorytmy, bazy& 53.51\\ \hline
+\multicolumn{4}{c|}{Iteracja I} \\ \hline
+1&dr inż. Zbigniew Gołębiewski&algorytmy, bazy& 69.06\\
+2&prof. dr hab. Mirosław Kutyłowski&bezpieczeństwo, sieci komputerowe&  65.88\\
+3&dr inż. Przemysław Błaśkiewicz&wbudowane, bezpieczeństwo&62.79\\
+4&dr inż. Marcin Zawada&programowanie, sieci komputerowe&61.85\\
+5&dr hab. inż. Marek Klonowski &algorytmy, sieci& 58.28\\ \hline
+
+\end{tabular}
+\caption{Przykład użycia algorytmu numer 2 dla prac z dwoma autorami dla prof. dr hab. Jacka Cichonia i dr inż. Jakuba Lemiesza.}
+\label{table:3}
+\end{table}
+
+
+\section{Lista recenzentów}
+
+Jednakże największe możliwości zapewnia stworzony algorytm wykorzystujący absorbujące spacery losowe. Umożliwia on stworzenie rankingu dla wybranych przez nas wcześniej osób. Jest to bardzo użyteczne, w momencie, gdy np. dostępnych jest tylko kilku naukowców i tylko dla nich chcemy poznać zestawienie. Rozważmy przypadek, że mamy do dyspozycji listę losowo wybranych recenzentów i chcemy wśród nich dla ustalić dla naukowca, kto będzie najlepiej nadawał się do recezencji. Podobnie w momencie, gdy znamy temat pracy możemy wybrać listę osób specjalizujacych się w tej dziedznie i wybrać tę, która również będzie najlepsza.
+
+
+\begin{table}[h]
+        \centering
+\begin{tabular}{c|c|c}
+Miejsce  & Proponowany recenzent & Wynik \\  \hline
+1&prof. dr hab. Mirosław Kutyłowski &255 \\
+1&dr inż. Przemysław Błaśkiewicz&236 \\
+3&dr inż. Łukasz Krzywiecki &189 \\
+4&dr Filip Zagórski&170 \\
+5&dr Przemysław Kubiak& 66 \\
+6&dr inż. Anna Lauks-Dutka& 45 \\
+7&dr inż. Wojciech Wodo& 39 \\
+
+\end{tabular}
+\caption{Przykład użycia algorytmu numer 3 dla dr Marcin Michalski na liście osób specjalizujących się w bezpieczeństwie komputerowym.}
+\label{table:4}
+\end{table}
+
+Rozkład takich osób prezentuje się w tabeli \ref{table:4}, wynik zależy od ilości stwrzonych prac połączeń z innymi osobami z sieci współpracy, w TOP-4 znajdują się osoby, które stworzyły najwięcej materiałów z różnymi osobami, więc ich wynik jest największy.
+
+
+\section{Współczynnik tłumienia}
+
+
+Ten test został przeprowadzono w celu ustalenia rozproszenia rekomendacji w zależności od współczynnika tłumienia $\alpha$ oraz sprawdzenia poprawności działania algorymów. Algorytmy odpalono 100-krotnie dla każdego z 28 naukowców z Katedy Informatyki, a następnie obliczono ile różnych propozycji pojawia się w TOP-5 średnio dla różnych wartości $\alpha$.
+
+\begin{table}[h]
+        \centering
+\begin{tabular}{c|c|c|}
+$\alpha$ & \multicolumn{2}{c|}{Średnia ilość różnych propozycji dla TOP-5 rekomendacji} \\ \hline
+& Wersja z jednym autorem pracy&Wersja z dwoma autorami \\ \hline
+0.05 & 8.939 & 9.606\\
+0.15 & 8.953 & 11.147\\
+0.25 & 8.957 & 12.451\\
+0.35 & 9.000 & 12.915\\
+0.45 & 9.025 & 12.984\\
+0.55 & 9.057 & 12.746\\
+0.65 & 9.046 & 11.973\\
+0.75 & 9.025 & 10.855\\
+0.85 & 9.550 & 9.702\\
+0.95 & 10.985 & 9.610
+\end{tabular}
+\caption{W tym teście sprawdzono ile różnych wyników pojawia się w TOP-5 rankingu zależnie od zastosowanego współczynnika tłumienia.}
+\label{table:5}
+\end{table}
+
+Zgodnie z naszą intuicją, wraz ze wzrostem prawdopobieństwa na powrót do wierzchołka startowego(czyli w przypadku, gdy współczynnik maleje, bo prawdopodobieństwa na powrót jest równe $1-\alpha$) rozporoszenie wyników maleje. Zastosowanie współczynnika równego $0.85$, sugerowanego przez \cite{RecommenderASurvey} niemal okrywa się z uzyskanymi wynkami, które sugerują, że  $0.75$ zapewnia podobne skupenie jak  równy $0.25$. Zmniejsząc parametr z $0.95$ na $0.75-0.85$ średnio zyskujemy, nawet dwie odrębne propozycje mniej, co czyni wyniki bardziej powtarzalnymi.
+
+Z kolei w przypadku algorytmu natrafaimy na ciekawe zjawisko, że najbardziej potwarzające się wyniki trafiają się przy dużym oraz bardzo małym współczynniku, wynika to najprawdopodobniej z małej próbki danych jaką stanowi grupa 28 naukowców. Przy małym współczynniku spacer zamienia się niemal w zwykły spacer bez powrotów (teleportacji) i najprawdopodobniej wszystkim proponuje te same osoby, które posiadają najwięcej połączeń z innymi.

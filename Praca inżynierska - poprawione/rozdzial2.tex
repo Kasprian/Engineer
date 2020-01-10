@@ -1,0 +1,114 @@
+\chapter{Implementacja systemu}
+\thispagestyle{chapterBeginStyle}
+
+\section{Opis zadania}
+
+Praktyczną cześć pracy stanowi stworzenie systemu rekomendacji wykorzystującego model, czyli opisanego wcześniej podejścia model-based collaborative filtering. Taki silnik w oparciu o losowy spacer na grafie ma rozwiązać problem utworzenia listy najlepszych propozycji recenzentów dla grupy naukowców. Rekomendacje będą opierać się na połączeniach między użytkownikami, które istnieją, jeśli w przeszłości współpracowali przynajmniej przy jednej pracy naukowwej. 
+
+Pierwszym krokiem implemetacji było utworzenie bazy danych. W tym celu wykorzystano gotową bazę z \textit{dblp} oraz kadrę z Katedry Informatyki Wydziału Podstawowych Problemów Techniki, która posłużyła do prezentacji wyników. Następnym zadaniem była implementacja samego algorytmu rekomendacji. Jako pierwszą rozpatrzono wersję, która tworzy listę rankingowej dla prac z jednym, a następnie z dwoma autorami. Ostatnim etapem było rozpatrzonie specyficznego przypadku rekomendacji, gdy lista dostępnych recenzentów jest specyzowana przy pomocy listy.
+
+\section{Technologie}
+
+Przy tworzeniu systemu wykorzystano język Julia, który został powstał w 2012 roku w celu połączenia składni oraz interaktywności języków takich jak Python, Matlab czy R, oraz szybkości kompilacji takich języków jak Fortan czy C. Do przetrzymywania i przetwarzania danych wykorzystana została bibloteka LightGraphs \cite{Bromberger17}. Projekt powtał na ostatnich stabilneych wersje oprogramowania Julia w wersji 1.0.5 (2019-09-09) oraz bibloteka LightGrahs w wersji 1.3.0.
+
+
+\section{Baza danych}
+
+Podczas implementacji algorytmów oparto się na dwóch bazach danych. Pierwszą wykorzystaną w fazie początkowej jest stworzona przez J. Leskovec z Uniwerytetu Standforda sieć współpracy między naukowcami zajmującymi się tematami z dziedziny Informatyki \cite{SNAPDB}. Cała sieć opiera się na otwartej bibliografii \textit{dblp} zawierającej informacje o artykułach i konferancjach w informatyce. Naukowców reprezentujemy przy pomocy węzłów w nieskierowanym spójnym grafie, którzy są połączeni, jeśli razem opublikowali wspólną pracę. 
+
+Jednakże w ostatecznych testach w celu zobrazowanie działania systemu na realnym przypadku posłużono się stworzoną przez autora bazą, która reprezentuje sieć współpracy między pracownikami Katedry Informatyki WPPT \cite{WPPTKatedra}. Podobnie jak w przykładzie z \textit{dblp } powstały nieskierowany graf łączy krawędzią dwóch naukowców, w momencie, gdy współpracowali podczas tworzenia pracy naukowej. W opracowaniu struktury posłużono się informacjami z zbioru danych \textit{ResarchGate} oraz \textit{dblp}. 
+
+Po opracowaniu sieci współpracy natrafiono jednak na problem, powstały grał nie był spójnym, czego wymaga od nas zastosowanie spacerów losowych. Ta komplikacja wynikała z fakt,że niektórzy naukowcy współpracują w swoim małym gronie tworząc odrębne sieci, lub nie współpracowali z rozpatrywaną grupą osób, pojawiając się jako tzw. \textit{czarne owce}, czyli elementy dla których nie można przeprowadzić rekomendacji. W celu wyeliminowania tych niedogodności zdecydowano się na wykorzystywanie metody hybrydowej Content-Boosted Collaborative Filtering, gdzie w sieci powiązań wykorzystujemy dodatkowe informacje o użytkownikach. Bazując na rozwiązaniu z \cite{MovieRecommendationusingRandomWalksovertheContextualGraph} do modelu dodano dodatkowe informacje w postaci 8 tagów:
+\begin{itemize}
+    \item algorytmy,
+    \item bezpieczeństwo komputerowe,
+    \item programowanie,
+    \item bazy danych,
+    \item matematyka,
+    \item technologie sieciowe,
+    \item systemy wbudowane,
+    \item big data.
+\end{itemize}
+Zostały one następnie przypisane do konkretnych osób odpowiadającej tematyce w jakiej się specjalizuje i umieszone w grafie tworzącym sieć powiązań. Dzięki temu już na początku, nawet dla osoby, która nie współpracowała z innymi jesteśmy w stanie zaproponować recenzentów na podstawie tego w czym się specjalizują. Te dodatkowe informacje to rodzaj profilu użytkownika, który został opisany w rozdziale \ref{chap:content}.
+
+\section{Mechanizm działania systemu rekomendacji}
+
+
+Powstałe zależności zapamietujemy przy pomocy grafu nieskierowanego, gdzie nasze tagi pewnią role specjalnych wierzchołków zwiększających zależność między użytkownikami. 
+
+Aby mówić o spacerze musimy jednak najpierw zdefiniować jak będziemy się po nim poruszać, pojedynczy krok na naszym grafie przebiega następująco: z pewnym prawdopodobieństwem wylosuj tag, do którego przypisany jest naukowiec lub jednego z jego sąsiadów i zwróć go.
+
+\begin{pseudokod}
+\DontPrintSemicolon
+\KwData{obecny wierzchołek}
+\KwResult{sąsiad wierzchołka lub tag}
+\SetKwFunction{FMain}{Pojedynczy krok}
+\SetKwProg{Fn}{Funkcja}{:}{}
+\Fn{\FMain{obecny wierzchołek}}{
+\eIf{Random() $ > $ prawdopodobieństwo}{
+\KwRet Randomowy tag\;}{
+\KwRet Sąsiad obecnego wierzchołka\;}}
+\end{pseudokod}
+
+Następnie wykorzystując takie kroki możemy skonstruować spacer losowy z restartami opisanymi w \ref{chap:spacerlosowezrestartami}. W uproszczeniu działanie takiego spaceru przebiega następująco: zaczynamy od pewnej krawędzi oznaczając ją jako obecną, a potem dla zadanej przez zmienną ilości kroków przechodzimy do jej sąsiada, lub z pewnym prawdopodobieństwem wracamy do punktu startowego i powtarzamy czynność. Na końcu (wiersz $7-8$) upewniamy się że nie zatrzymaliśmy się w punkcie początkowym lub tagu.
+
+\begin{pseudokod}[H]
+\DontPrintSemicolon
+\caption{Spacer losowy}
+\KwData{obecny wierzchołek, który reprezentuje osobę dla której tworzymy rekomendacje, grag}
+\KwResult{wierzchołek,który reprezentuje propozycje recenzenta}
+obecny wierzchołek = startowy wierzchołek\;
+\For{$i\leftarrow 1$ \KwTo liczba kroków}{
+\eIf{Random() $>$ prawdopodobieństwo}
+	{obecny wierzchołek = startowy wierzchołek\;
+	}
+	{obecny wierzchołek = pojedynczy krok(obecny wierzchołek)\;
+	}
+}
+\While {obecny wierzchołek ==  startowy wierzchołek \textbf{or} obecny wierzchołek == tag}{
+obecny wierzchołek = pojedynczy krok(obecny wierzchołek)\;
+}
+
+\end{pseudokod}
+
+Tak stworzony spacer zatrzymuje się w wierzchołku z częstotliwością zależnożną od tego ile ścieżek od punktu startowego. Ilością kroków oraz prawdopodobieństwem powrotu do początkowego wierzchołka jesteśmy w stanie sterować z jakim rozproszeniem system będzie zapewniał propozycje.
+
+
+W następnej kolejności cały proces tworzenia rankingu recenzentów opiera się na symulowaniu wielu takich losowych spacerów na stworzonym grafie oraz zliczaniu wierzchołków, w których spacer zakończył się. Na tej podstawie tworzony jest ranking osób, który najlepiej pasują do danej osoby.
+
+Drugim zadaniem było rozpatrzenie przypadku, gdy chcemy znaleźć recezenta dla pracy napisanej przez dwóch autorów. 
+Pierwszym krokiem jest posłużenie się algorytmem z pierwszego do wyznaczenia dwóch listy rankingowych dla obu nakowców osobno, a następnie wybranie interesującej nas części wspólnej. Musimy jednak uwzględnić, że jeśli jeden z recezentów uzyskałby wysoki wynik u jednego naukowca, ale niski u drugiego albo wcale, jego średni wynik i tak zapewniałby mu wysoką propozycję w rankingu, mimo słabego dopasowania. W związku z nie można było skorzystać ze średniej arytmetycznej bez wcześniejszej normalizacji ocen. Problem rozwiązano stosując średnią harmoniczną, która świetnie sprawdza się, gdy potrzebna jest średnia z ocen \cite{HarmonicMean}. Obliczamy ją w następujący sposób:
+\begin{equation}
+\label{eq:ham}
+    \frac{n}{\frac{1}{a_1} + \frac{1}{a_2} + \cdots + \frac{1}{a_n}}
+\end{equation}
+
+Jeśli jeden z recezentów uzyska wysoki wynik u jednego np. $50$ i niski u drugiego np. $4$. Jego wynik od teraz będzie wynosił $\frac{2}{\frac{1}{50}+\frac{1}{4}}= 7.407$, a nie jak dla średniej arytmetycznej $27$. W ten sposób nasza średnia jest bardziej skierowana ku wartości mniejszej. Analogicznie do tego rozwiązania można w prosty sposób rozszerzyć na większą liczbę autorów, wykorzystując ogólny \ref{eq:ham} do obliczenia średniej dla kolejnych osób.
+
+Ostatnim etapem implementacji było opracowanie metody na stworzenie rankingu, gdy zbiór naszych recezentów jest określony przez listę. W tym celu posłużono sie ostatnim rodzajem spacerów omówianych w pracy, a mianowicie absorbującymi spacerami losowymi \ref{chap:abs}. Mechanizm działania przypomina globalne systemy rankingowe, jednakże określamy stany absorbujące,,z których nie możemy już wyjść. Nasz ,,losowy surfer'' krąży po grafie zaczynając od osoby, dla której tworzymy rekomendacje aż do momentu, gdy wpadnie do stanu absorbującego, czyli w tym przypadku natrafi na wierzchołek reprezentujący jednego z recenzentów.
+
+
+\begin{pseudokod}
+\DontPrintSemicolon
+\caption{Absorbujący spacer}
+\KwData{naukowiec, dla którego tworzymy ranking oraz lista recenzentów}
+\KwResult{recenzent z listy}
+obecny wierzchołek = naukowiec\;
+\While{true}{
+current edge = wylosuj z jedngo z sąsiadów obecnego wierzchołka\;
+\If{obecny wierzchołek $\leftarrow 1$ \KwTo lista recenzentów}{
+		break\;
+	}
+}
+\KwRet obecny wierzchołek \;
+\end{pseudokod}
+
+Podobnie jak w spacerach z restartami powyższy algorytm odpalany jest wielokrotnie w celu symulacji wielu takich spacerów, a wyniki są sumowane. To rozwiązanie posiada wiele zalet, między innymi możliwe jest wybranie takich recenzentów, którzy są w danym momencie dostępni lub możliwe jest opracowanie listy tych, którzy specjalizują się w danej dziedzinie, lub wyeliminowanie tych, którzy napisali wspólnie wiele prac, więc zajmują się z dużym prawdopodobieństwem tym samym zagadnieniem, lecz są połączeni w negatywny z naszego punktu widzenia sposób np. są spokrewnieni.
+
+
+W pracy podjęto również próbuję stworzenia modelu, który jest opisany przy pomocy grafu ważnego, gdzie wagę z wierzchołka $u$ do wierzchołka $v$ definiujemy jako:
+\begin{equation*}
+   waga(u,v)=\frac{\text{ilość wspólnych prac $u$ z $v$}}{\text{suma wszystkich prac napisanych przez $u$}}
+\end{equation*}
+
+W takim przypadku szansa na krok do sąsiedniego wierzchołka nie jest jednolita, lecz zależy od powyższej wagi. Jednakże takie podejście stworzył ogromny problem braku różnorodności propozycji, czyli częsty problem tzw. długiego ogona. Osoby, które są ścisłymi współpracownikami lub mają wiele prac pojawiają się w czołówce rankingu u każdej osoby. Z tego powodu zrezygnowano z dalszych prób wykorzystania takich informacji.

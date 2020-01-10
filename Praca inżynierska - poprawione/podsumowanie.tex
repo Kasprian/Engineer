@@ -1,0 +1,13 @@
+\chapter{Podsumowanie}
+\thispagestyle{chapterBeginStyle}
+
+
+%W podsumowaniu znajduje się opis tego co udało się zrobić oraz omówić. Wskazać dalszy rozwój systemu oraz podkreślić nowatorskie rozwiązania.
+
+W niniejszej pracy udało się opisać główne metody wykorzystywane w silnikach rekomendacji: collaborative filtering oraz content based, a następnie wskazać różnice w ich stosowaniu. Ustalono zasady gromadzenia informacji o użytkowniku oraz formę ich przechowywania. Objaśniono również najważniejsze miary stosowane do porównywania recenzowanych obiektów. Kolejno skupiono się na dość niezbadanym podejściu zastosowania procesów jakim są spacery losowe w celu filtracji informacji w takich systemach. Omówiono, gdzie wykorzystuje się takie spacery, jak działają oraz jakie jest ich ich podział ze względu na użycie w systemach rekomendacji.
+
+W dalszej kolejności omówiono główne problemy jakie można napotkać podczas tworzenia takich silników. Jedne z nich, takie jak zimny start oraz rzadkość danych, które pojawią, gdy nie mamy lub mamy zbyt mało danych o użytkowniku można zlikwidować wykorzystując metody hybrydowe. Przykładem może być użyciem ankietyzacji na nowo utworznym koncie w collaborative filtering i zapisanie tych dodatkowym informacji w sieci kolaboracji w postaci tagów lub innych etykiet.
+
+Na koniec opisano proces tworzenia takigo systemu w oparciu o błądzenie losowe, w celu rozwiązania problemu doboru recezenta dla grupy naukowców zaproponowano trzy algorytmy, które pozwalają na stworzenie rankingu oceniającego dopasowanie recenzenta w różnych scenariuszach. Pierwszy tworzy silnik rekomendacji dla jednej osoby, aby następnie wykorzystać go rekomendacji dla dwóch osób jednocześnie. W ostatni algorytmie ukazano sposób rekomendacji dla zadanej listy recenzentów, zastosowano w tym celu absorbujące spacery losowe. W stworznym modelu wykorzystano tagi, które zapewniają nam dodatkowe informacje o użytkownikach systemu i rozwiązują problem niespójności grafu.
+
+W dalszym rozwoju systemu istnieje możliwość rozszerzenia rekomendacji z dwóch na wiele autorów, wykorzystująć analogiczne rozwiązanie. W tym celu należałoby sprawdzić czy zastowanie średniej harmoniczej również sprawdziłoby się podczas uśredniania wyników, czy konieczne byłoby inny rodzaj normalizacji wyników. Ponadto dla dużych zbiorów danych obliczanie w locie mogłoby być niefektywne, w przypadku stworzenia serwisu online, dlatego jedną z możliwosci byłoby wcześniejszej obliczenie wyników i zapisanie w macierzy, aby uzyskać szybki dostęp do informacji.
