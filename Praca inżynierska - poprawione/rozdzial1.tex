@@ -84,8 +84,8 @@ Zauważmy w tym miejscu dodatkowo, że w przypadku porównania przedmiotów (ang
     \begin{equation}
         \cos(\theta) = {\mathbf{a} \cdot \mathbf{b} \over \|\mathbf{a}\| \|\mathbf{b}\|} = \frac{ \sum\limits_{i=1}^{n}{a_i  b_i} }{ \sqrt{\sum\limits_{i=1}^{n}{a_i^2}}  \sqrt{\sum\limits_{i=1}^{n}{b_i^2}} }~.
     \end{equation}
-    Wykorzysywana jest ona miedzy innymi w sklepie internetowym Amazon \cite{Amazon.comRecommendationsItem-to-ItemCollaborativeFiltering}.
-    \item Indeks Jaccarda, zdefiniowana jako moc części wspólnej zbiorów $A$ i $B$ przez moc ich sumy, mierzy podobieństwo pomiędzy dwoma zbiorami:
+    Wykorzystywana jest ona między innymi w sklepie internetowym Amazon \cite{Amazon.comRecommendationsItem-to-ItemCollaborativeFiltering}.
+    \item Indeks Jaccarda, zdefiniowany jako moc części wspólnej zbiorów $A$ i $B$ przez moc ich sumy, mierzy podobieństwo pomiędzy dwoma zbiorami:
     \begin{equation}
        J (A,B) = \frac{|A \cap B|}{|A \cup B|}.
     \end{equation}
@@ -114,8 +114,7 @@ System rekomendacji oparty na technice content-based filtering, po obliczeniu po
 
 \section{Collaborative filtering}
 
-Druga z metoda stosowanych w systemach rekomendacji to collaborative filtering (CF).
-Bazuje ona na pomyśle, że użytkownikom o podobnych upodobaniach odpowiadają podobne produkty. W tym przypadku nie wykorzystujemy charakterystyki produktów, upodobania użytkownika są określane na podstawie jego historii z produktami np. jakie produkty kupił, a następnie na tej podstawie obliczane są korelacje między użytkownikami. Następnie te korelacje służą do stworzenia dopasowania produktów dla konkretnego użytkownika.
+Druga z technik stosowanych w systemach rekomendacji to collaborative filtering (CF). Bazuje ona na pomyśle, że użytkownikom o podobnych upodobaniach odpowiadają podobne produkty. W tym przypadku nie wykorzystujemy charakterystyki produktów, upodobania użytkownika są określane na podstawie jego historii z produktami np. jakie produkty kupił, a następnie na tej podstawie obliczane są korelacje między użytkownikami. Następnie te korelacje służą do stworzenia dopasowania produktów dla konkretnego użytkownika.
 
 Wśród algorytmów rekomendacji wykorzystujących collaborative filtering wyróżniamy 2 podgrupy:
 \begin{itemize}
@@ -197,9 +196,12 @@ Jednorodny proces stochastyczny z czasem dyskretnym $X_{0}, X_{1}, X_{2},\dots$ 
 \end{definition}
 
 Z powyższej definicji wynika fakt nazywany własnością Markowa lub własność braku pamięci, który mówi o tym stan $X_{t}$ zależy wyłącznie od poprzedniego stanu, a nie w jaki sposób w naszym procesie dotarliśmy do stanu $X_{t-1}$. Jednakże należy pamiętać, że nie oznacza to, że w procesie o własności Markowa zmienna $X_{t}$ jest niezależna od zmiennych losowych $X_{0},X_{1},\dots,X_{t-2}$.
-Oznacza to jedynie, że zależność $X_t$ od przeszłości jest zawarta w $X_{t-1}$ \cite{Metodyksiazka}.
+Oznacza to jedynie, że zależność $X_t$ od przeszłości jest zawarta w $X_{t-1}$ \cite{Metodyksiazka}. Takie prawdopodobieństwo, że proces przechodzi z i do j zapisujemy jako:
+\begin{equation*}
+P_{i,j} = Pr(X_t = j | X_{t-1} = 1).
+\end{equation*}
 
-Z tej własności wynika fakt, że proces Markowa jest jednoznacznie zdefiniowany przez macierz przejść w jednym kroku
+Z tej właściwości wynika również istotny fakt, że proces Markowa jest jednoznacznie zdefiniowany przez macierz przejść w jednym kroku
 \begin{equation*}
 \bm{P} =
 \left(\begin{array}{ccccc}
@@ -212,10 +214,35 @@ P_{i,0} & P_{i,1}  & \cdots & P_{i,j} & \cdots \\
 \label{eq:postac}
 \end{equation*} 
 
-W związku z tym, że wyraz w i-tym wierszu i j-tej kolumnie jest prawdopodobieństwem tego, że proces przechodzi z i do j w jednym kroku, wynika że dla każdego i, $\sum_{j\ge0} P_{i,j}=1$ \cite{Metodyksiazka}. Tę reprezentację można w wygodny sposób wykorzystać do obliczeń kolejnych stanów procesu. Jeśli $\overrightarrow{p}(t)=(p_0(t),p_0(t),p_0(t),\dots )$  będzie wektorem określającym dystrybucję stanu łańcucha w czasie $t$, gdzie $p_i(t)$ oznacza, że proces znajduje sie w stanie $i$ w czasie $t$, to kolejne kroki obliczamy iterując nastepujące równanie:
+W związku z tym, że wyraz w i-tym wierszu i j-tej kolumnie jest prawdopodobieństwem tego, że proces przechodzi z i do j w jednym kroku, wynika że dla każdego i, $\sum_{j\ge0} P_{i,j}=1$ \cite{Metodyksiazka}. Tę reprezentację można w wygodny sposób wykorzystać do obliczeń kolejnych stanów procesu. Jeśli $\overrightarrow{p}(t)=(p_0(t),p_0(t),p_0(t),\dots )$  będzie wektorem określającym dystrybucję stanu łańcucha w czasie $t$, gdzie $p_i(t)$ oznacza, że proces znajduje sie w stanie $i$ w czasie $t$, to kolejne stany (kroki) obliczamy iterując nastepujące równanie:
 \begin{equation}
     \overrightarrow{p}(t)=\overrightarrow{p}(t-1)\bm{P}.
 \end{equation}
+
+W naszym przypadku interesuje nas taki rozkład stanów, który nie zmienia się po przejściu.
+
+
+\begin{definition}\label{def:stacjonarny}
+Rozkładem stacjonarnym zwany również rozkładem równowagi nazywamy łańcucha Markowa nazywamy taki rozkład prawdopodobieństwa $ \overrightarrow{\pi}$, dla którego
+\begin{equation*}
+    \overrightarrow{\pi} = \overrightarrow{\pi} \bm{P}.
+\end{equation*}
+\end{definition}
+
+W momencie, gdy nasz łańcuch osiągnie rozkład stacjonarny, to pozostanie taki w nim do końca tzn. jego dystrybucja nie zmieni się w kolejnych krokach. Przydatne jest tutaj twierdzenie, które gwarantuje nam istnienie takiego unikalnego rozkładu.
+
+\begin{definition}
+\label{warunki}
+Dowolny skończony, nieredukowalny i ergodyczny łańcuch Markowa ma następujące własnosci:
+\begin{enumerate}
+    \item łańcuch ma dokładnie jeden rozkład stacjonarny  $\overrightarrow{\pi} = (\pi_0,\pi_1,\pi_0,\dots,\pi_n)$,
+    \item dla wszystkich i oraz j istnieje granica $\lim_{t \to \infty}P^t_{j,i}$ i jest niezależna od j,
+    \item dla wszystkich i oraz j, $\pi_i =\lim_{t \to \infty}P^t_{j,i}=1/h_{i,i}$.
+\end{enumerate}
+*$h_{i,i}$- liczba kroków między ponownymi odwiedzinami i.
+\end{definition}
+
+Jesteśmy w stanie wykorzystać pierwszy punkt z \ref{warunki}, aby zdobyć pewność, że nasz model po spełneniu tych warunków będzie posiadał unikalny rozkład stacjonarny i będziemy w stanie z pewną dokładnością przybliżać go podczas naszych obliczeń.
 
 
 Spacer losowy (lub inaczej błądzenie losowe) to nieskomplikowany proces stochastyczny, który często odbywa się na prostej, na płaszczyźnie lub na grafie. W tej pracy rozważamy spacery odbywające się na grafach.
@@ -239,45 +266,48 @@ Globalne systemy rankingowe wykorzystują błądzenie losowe do stworzenia jedne
 
 Wcześniejsze rozwiązania przed PageRankiem polegały na indeksowaniu termów zebranych przy pomocy robotów internetowych (ang. \textit{web crawler}) na przykład tak jak w algorytmie \textit{tf-idf} \ref{tfidf}. Następnie, gdy pojawiało sie zapytanie w postaci listy termów, strony z tymi termami były wyszukiwane i rankingowane w kolejności odzwierciedlającej ich użycie. Jednakże prowadziło to nieetycznych praktych, gdzie właściele stron umieszczali na nich niewidoczne tagi na przykład nadając im kolor taki jak tło strony, w rezultacie oszukując wyszukiwarkę, która wysoko pozycjonowała strony, mylnie interpretując ukryte tagi. PageRank ominął ten problem, bazując na idei ,,losowego spacerowicza`` (ang. \textit{random surfer}), który został zaczerpnięty ze spacerów losowych \ref{chap:spacerylosowe}.
 
-Jeśli sieć internetową opiszemy jako graf $G = (V, E)$, gdzie $V$ - strony internetowe, $E$ - linki między stronami, link ze strony $u \in V$ na stronę $v \in V$ oznacza, że strona $v$ jest ważna dla strony $u$. Waga strony $v$ jest wprost proporcjonalna do wagi strony $u$ i odwrotnie proporcjonalna do ilości linków wychodzących ze strony $u$. PageRank polega na symulacji wielu spacerów losowych na takim grafie, zaczynając od pewnej losowo wybranej strony, aby następnie również w losowo wybrany sposób podążać za linkami wychodzącymi z niej. Kolejno cały proces wybierania stron wychodzących jest iterowany zadaną ilość razy, aby potem wyróżnić serwisy internetowe posiadające większą ilość spacerowiczów jako te ,,ważniejsze`` od tych praktycznie nie odwiedzanych. W konsekwencji tego, że ten algorytm przy rankingowaniu strony nie wykorzystuje informacje jakie znajdują się na niej, a linki znajdujące się na innych stronach, które wskazują na nie, właściele strony nie są w stanie prosty sposób zmylić wyszukiwarki, o ile nie kontrolują tych innych stron. Algorytm nie wierzy w to co strona mówi o sobie, wykrozystuje opinię innych stron, aby ocenić jej wartość. Oczywiście nasuwa sie pomysł stworzenia stron, które wskazywałyby na naszą wybraną stronę w celu zwiększenia jej wartości indeksu, jednakże ponieważ nie byłyby one wskazywane przez inne strony internetowe wartość naszej strony nie rosłaby w żaden sposób \cite{MiningofMassiveDatasets}.
+Jeśli sieć internetową opiszemy jako graf $G = (V, E)$, gdzie $V$ - strony internetowe, $E$ - linki między stronami, link ze strony $u \in V$ na stronę $v \in V$ oznacza, że strona $v$ jest ważna dla strony $u$. Waga strony $v$ jest wprost proporcjonalna do wagi strony $u$ i odwrotnie proporcjonalna do ilości linków wychodzących ze strony $u$. PageRank polega na symulacji wielu spacerów losowych na takim grafie, zaczynając od pewnej losowo wybranej strony, aby następnie również w losowo wybrany sposób podążać za linkami wychodzącymi z niej. Kolejno cały proces wybierania stron wychodzących jest iterowany zadaną ilość razy, aby potem wyróżnić serwisy internetowe posiadające większą ilość spacerowiczów jako te ,,ważniejsze`` od tych praktycznie nie odwiedzanych. W konsekwencji tego, że ten algorytm przy rankingowaniu strony nie wykorzystuje informacje jakie znajdują się na niej, a linki znajdujące się na innych stronach, które wskazują na nie, właściele strony nie są w stanie prosty sposób zmylić wyszukiwarki, o ile nie kontrolują tych innych stron. PageRank nie wierzy w to co strona mówi o sobie, tylko wykorzystuje opinię innych, aby ocenić jej wartość. Oczywiście nasuwa sie pomysł stworzenia stron, które wskazywałyby na naszą wybraną stronę w celu zwiększenia jej wartości indeksu, ponieważ jednak nie byłyby one wskazywane przez inne strony internetowe wartość naszej strony nie rosłaby w żaden sposób \cite{MiningofMassiveDatasets}.
 
 
-Aby zapewnić istnienie unikalnego rozkładu stacjonarnego dla rozważanego procesu, musimy zapewnić, że rozważany graf będzie spójny. Możemy sobie z tym poradzić dodając małe prawdopodobieństwo przejścia od wszystkich węzłów do wszystkich innych węzłów. Takie rozwiązanie zapewnia stworzenie silnie spójnego grafu. Uproszczona wersja  rankingu PageRank dla pewnej strony $n$ wyraża się w następujący sposób \cite{RecommenderASurvey}:
+Taki algorytm jest przykładem wykorzystania łańcuchów Markowa, gdzie nasz graf i jego wierzchołki z prawdopodobieństwem przejść reprezentujemy przy pomocy macierzy przejść. Zgodnie z \ref{chap:spacerylosowe}, aby zapewnić istnienie unikalnego rozkładu stacjonarnego dla naszego modelu, musimy zapewnić jego ergodyczność. Problem pojawia się z tym, że stworzony przez nas graf nie jest silnie spójny, co pociąga za sobą brak spełenia warunku nieredukowalności. Możemy sobie z tym poradzić dodając małe prawdopodobieństwo przejścia od wszystkich węzłów do wszystkich innych węzłów. Dopiero wtedy możliwe jest przybliżanie rozkładu stacjonarnego poprzez obliczanie iteracyjne rozwiązywanie kolejnych wektorów $ \overrightarrow{v_{t}}$:
 \begin{equation}
-    PR(n)= \frac{(1-\alpha)}{N} + \alpha\sum_{q:(q,n)\in E} \frac{PR(q)}{deg(q)}
+\label{pagerank}
+   \overrightarrow{v_{t}} = \alpha \textbf{M}\overrightarrow{v_{t-1}} + \frac{(1 - \alpha) \overrightarrow{e}}{n},
 \end{equation}
-
 gdzie:
 \begin{itemize}
-    \item $N$ - liczba storn internetowych,
-    \item $n$ - strona dla, której liczmy wynik,
-    \item $q$ - sąsiad strony $n$,
-    \item $\alpha$ - współczynnik tłumienia (dla sieci Internet przyjmowana wartość to 0.85),
-    \item składnik $\frac{1-\alpha}{N}$ mówi o możliwości losowego skoku z dowolnego miejsca grafu do  wierzchołka $n$
-     \cite{RecommenderASurvey}.
+    \item n - liczba wierzchołków grafu
+    \item $\bm{M}=[m_{i,j}] $  - macierz przejść, $1 \leq i, j \leq n$,
+    \item $\overrightarrow{e}$ - $n \times 1$ wektor startowy tzn. $\overrightarrow{e_{i}}=1$ dla każdego $i \leq n$,
+    \item $ \overrightarrow{v_{t-1}}$ - $n \times 1$, wektor rankingowy  reprezentuje ocenę pewnej wybranej strony internetowej w iteracji $t-1$,
+    \item $ \overrightarrow{v_{t}}$ - $n \times 1$, wektor rankingowy reprezentuje ocenę pewnej wybranej strony internetowej w iteracji $t$,
+    \item $\alpha$ - współczynnik określający szanse \textit{teleportację} do losowego wierzcołka, $0 \leq \alpha \leq 1$.
 \end{itemize}
 
 
-
-Zauważmy, że taki globalny system rankingowy daje identyczne wyniki niezależnie od wierzchołka w jakim zacznie się spacer (wartości rankingowe odpowiadają wartościom w rozkładzie stacjonarnym). Aby spersonalizować rekomendacje należy skorzystać z nieco innego rozwiązania, można wykorzystać np. spacery losowe z restartami oraz spacery losowe ze stanami absorbującymi.
+Zauważmy, że taki globalny system rankingowy daje identyczne wyniki niezależnie od wierzchołka w jakim zacznie się spacer (wartości rankingowe odpowiadają wartościom w rozkładzie stacjonarnym). Aby spersonalizować rekomendacje należy skorzystać z nieco innego rozwiązania, np. można wykorzystać spacery losowe z restartami lub spacery losowe ze stanami absorbującymi.
  
 \section{Spacery losowe z restartami}
 \label{chap:spacerlosowezrestartami}
 
 
-Globalne systemy rankingowe zwrócą wynik z takim samym rozkładem, niezależnie do tego w jakim wierzchołku rozpoczniemy spacer. Aby to zmienić zmodyfikujemy je tak, aby uwzględnić to jak daleko znajduje się wierzchołki od miejsca początkowego. Taki sposób nazywa spacerami losowymi z restartami i uzyskujemy go poprzez dodanie stałej szansy na powrót do startowego wierzchołka w każdym wykonywanym kroku. Dzięki temu tworzymy spersonalizowany widok na graf, wyższy wynik uzyskają wierzchołki, do których prowadzi więcej ścieżek. Ocena trafności wierzchołka j dla wierzchołka startowego i definiujemy jako prawdopodobieństwo stanu stacjonarnego (ang. \textit{steady-state propability}) $r_{i,j}$, czyli szansy że spacer w końcu zakończy sie w wierzchołku $j$ \cite{FastRandomWalkwithRestartandItsApplications}:
+Globalne systemy rankingowe zwrócą wynik z takim samym rozkładem, niezależnie do tego w jakim wierzchołku rozpoczniemy spacer. Aby to zmienić zmodyfikujemy go tak, aby uwzględnić to jak daleko znajduje się wierzchołki od miejsca początkowego. Taki sposób nazywa spacerami losowymi z restartami i uzyskujemy go poprzez zastąpienie stałej losowej szansy na \textit{teleportację} do losowego wierzchołka stałą szansą na powrót do startowego wierzchołka w każdym wykonywanym kroku. Dzięki temu tworzymy spersonalizowany widok na graf, a wyższy wynik uzyskają wierzchołki, do których prowadzi więcej ścieżek. Ocena trafności wierzchołka j dla wierzchołka startowego zapisujemy w wektorze rankingowym $ \overrightarrow{v_{t}}$ \cite{FastRandomWalkwithRestartandItsApplications}:
+
 \begin{equation}
 \label{rwr}
-    \overrightarrow{r_{i}} = \alpha \textbf{W}\overrightarrow{r_{i}} + (1 - \alpha) \overrightarrow{e_{i}},
+   \overrightarrow{v_{t}} = \alpha \textbf{M}\overrightarrow{v_{t-1}} + (1 - \alpha) \overrightarrow{e_i},
 \end{equation}
 gdzie:
 \begin{itemize}
-    \item $\textbf{W}=[w_{i,j}] $  - rozpatrywany graf, $1 \leq i, j \leq n$,
-    \item $\overrightarrow{e_{i}}$ - $n \times 1$ wektor startowy tzn. $\overrightarrow{e_{i}}=1$ dla i-tego wierzchołka startowego, pozostałe pola są zerami,
-    \item $ \overrightarrow{r_{i}}= [r_{i,j}] $ - $n \times 1$, wektor rankingowy, $r_{i,j}$ reprezentuje ocenę trafności wierzchołka $j$ dla wierzchołka $i$,
-    \item $\alpha$ - prawdopodobieństwo powrotu do wierzchołka startowego, liczba w zakresie $0 \leq \alpha \leq 1$,
-    \item n - liczba wierzchołków grafu.
+    \item n - liczba wierzchołków grafu
+    \item $\bm{M}=[m_{i,j}] $  - macierz przejść, $1 \leq i, j \leq n$,
+    \item $\overrightarrow{e_i}$ - $n \times 1$ wektor startowy tzn. $\overrightarrow{e_{i}}=1$ dla i-tego wierzchołka startowego, pozostałe pola są zerami,
+    \item $ \overrightarrow{v_{t-1}}$ - $n \times 1$, wektor rankingowy  reprezentuje ocenę pewnej wybranej strony internetowej w iteracji $t-1$,
+    \item $ \overrightarrow{v_{t}}$ - $n \times 1$, wektor rankingowy reprezentuje ocenę pewnej wybranej strony internetowej w iteracji $t$,
+    \item $\alpha$ - współczynnik określający szanse \textit{teleportację} do losowego wierzcołka, $0 \leq \alpha \leq 1$.
 \end{itemize}
+
+
 
 Równanie spaceru losowego z restartem odróżnia od PageRanku, to że wektor startowy $\overrightarrow{e_{i}}$ posiada wartość 1, tylko dla jednego wierzchołka, a PageRank dla każdego \cite{RandomWalkwithRestartanditsapplications}.
 
@@ -286,7 +316,23 @@ Do obliczenia rozwiązania można wykorzystać metodę iteracyjną \textit{OnThe
 Cały proces modelowania może przebiegać na różne sposoby. Grafy w łatwy sposób mogą reprezentować użytkowników, przedmioty czy tagi je opisujące \cite{RecommenderASurvey}. Przekrój różnych aplikacji spacerów losowych z restartami pokazuje jego elastyczność oraz odporność na takie problemy jak rzadkość danych (ang. \textit{data sparasity}, które dotykają metody collaborative filtering wykorzystujące pamięć. W dodatku umożliwiają porównanie takich obiektów jak obrazy czy ścieżki dzwiękowe, gdzie metody jak profile używane w content-based filtering nie sprawdziłyby się.
 
 
-\section{Absorbujące spacery losowe}
+\section{Stronnicze i absorbujące spacery losowe}
 \label{chap:abs}
 
-Ostatnim rodzajem spacerów omówionych w tej pracy są absorbujące spacery losowe, które podobnie jak spacery losowe z restartami są wykorzystywane do personalizacji wyników. Podobnie, symulujemy spacer losowy po grafie, lecz  wyróżniamy stany absorbujące (ang. absorbing states). Wejście do takiego stanu oznacza koniec naszego spaceru, bo nie mamy z niego żadnych ścieżek wychodzących. Ten sposób powstał, aby zapewnić możliwość skupienia się na pewniej grupie wierzchołków w grafie. Jeśli w grafie wierzchołki reprezentują zarówno użytkowników, przedmioty jak i tagi, zastosowanie zwykłego spaceru z nawrotami jest kłopotliwe w złożonych systemach. Wtedy wystarczy uznać przedmioty za stany absorbujące, następnie rozpocząć symulacje losowe spacery i zliczyć wyniki, które zwrócą nam żądana listę produktów.
+Innym sposobem personalizacji rankingu jest wykorzystanie grupy badanych obiektów, które skupiają się na pewnym temacie. PageRank dokonuje tego przy wykorzystaniu stronniczych spacerów losowych (ang. \textit{biased random walks}. Ich działanie przebiega podobnie do generalnego równania \ref{pagerank} PageRanka. Jedyną różnicą jest zamiana małej szansy na \textit{teleportację} do losowej strony na \textit{teleportację} do wyznaczonej zbioru \textit{S}, o którym wiemy, że skupia się na danym temacie. Strony z tego zbioru najprawdopodobniej odnoszą się do innych poświeconych tej samej dziedzinie, dzięki czemu nasze rekomendacje będą się niej skupiały. Wynik uzyskiwany jest analogicznie do poprzednich dwóch rozwiązań z uwzględnieniem nowego zbioru \textit{S}:
+
+\begin{equation}
+\label{rwr}
+   \overrightarrow{v_{t}} = \alpha \textbf{M}\overrightarrow{v_{t-1}} +\frac{(1 - \alpha) \overrightarrow{e_{\textit{S}}}}{|S|} ,
+\end{equation}
+gdzie:
+\begin{itemize}
+    \item n - liczba wierzchołków grafu
+    \item $\bm{M}=[m_{i,j}] $  - macierz przejść, $1 \leq i, j \leq n$,
+    \item $\overrightarrow{e_{\textit{S}}}$ - $n \times 1$ wektor startowy tzn. $\overrightarrow{e_{\textit{S}}}=1$ dla elementów odpowiadajacych zbiorowi \textit{S}, pozostałe pola są zerami,
+    \item $ \overrightarrow{v_{t-1}}$ - $n \times 1$, wektor rankingowy reprezentuje ocenę pewnej wybranej strony internetowej obliczony w iteracji $t-1$,
+    \item $ \overrightarrow{v_{t}}$ - $n \times 1$, wektor rankingowy reprezentuje ocenę pewnej wybranej strony internetowej w  w iteracji $t$,
+    \item $\alpha$ - współczynnik określający szanse \textit{teleportację} do losowego wierzcołka, $0 \leq \alpha \leq 1$.
+\end{itemize}
+
+Podobnie można rozwiązać problem wybrania stron poświęcocnych danym tematom przy użyciu absorbujących spacerów losowych. Dokonuje się tego poprzez oznaczenie stanów absorbujących (ang. absorbing states).  Wejście do takiego stanu oznacza koniec naszego spaceru, bo nie mamy z niego żadnych ścieżek wychodzących. Ten sposób powstał, aby zapewnić możliwość skupienia się na pewniej grupie wierzchołków w grafie. Jeśli wierzchołki reprezentują zarówno użytkowników, przedmioty jak i tagi, zastosowanie zwykłego spaceru z nawrotami jest kłopotliwe w złożonych systemach. Wtedy wystarczy uznać przedmioty za stany absorbujące, następnie rozpocząć symulacje losowe spacery i zliczyć wyniki, które zwrócą nam żądaną listę produktów.

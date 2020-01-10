@@ -18,7 +18,7 @@ Podczas implementacji algorytmów oparto się na dwóch bazach danych. Pierwszą
 
 Jednakże w ostatecznych testach w celu zobrazowanie działania systemu na realnym przypadku posłużono się stworzoną przez autora bazą, która reprezentuje sieć współpracy między pracownikami Katedry Informatyki WPPT \cite{WPPTKatedra}. Podobnie jak w przykładzie z \textit{dblp } powstały nieskierowany graf łączy krawędzią dwóch naukowców, w momencie, gdy współpracowali podczas tworzenia pracy naukowej. W opracowaniu struktury posłużono się informacjami z zbioru danych \textit{ResarchGate} oraz \textit{dblp}. 
 
-Po opracowaniu sieci współpracy natrafiono jednak na problem, powstały grał nie był spójnym, czego wymaga od nas zastosowanie spacerów losowych. Ta komplikacja wynikała z fakt,że niektórzy naukowcy współpracują w swoim małym gronie tworząc odrębne sieci, lub nie współpracowali z rozpatrywaną grupą osób, pojawiając się jako tzw. \textit{czarne owce}, czyli elementy dla których nie można przeprowadzić rekomendacji. W celu wyeliminowania tych niedogodności zdecydowano się na wykorzystywanie metody hybrydowej Content-Boosted Collaborative Filtering, gdzie w sieci powiązań wykorzystujemy dodatkowe informacje o użytkownikach. Bazując na rozwiązaniu z \cite{MovieRecommendationusingRandomWalksovertheContextualGraph} do modelu dodano dodatkowe informacje w postaci 8 tagów:
+Po opracowaniu sieci współpracy natrafiono jednak na problem, powstały grał nie był spójnym, czego wymaga od nas zastosowanie spacerów losowych. Ta komplikacja wynikała z fakt, że niektórzy naukowcy współpracują w swoim małym gronie tworząc odrębne sieci, lub nie współpracowali z rozpatrywaną grupą osób, pojawiając się jako tzw. \textit{czarne owce}, czyli elementy dla których nie można przeprowadzić rekomendacji. W celu wyeliminowania tych niedogodności zdecydowano się na wykorzystywanie metody hybrydowej Content-Boosted Collaborative Filtering, gdzie w sieci powiązań wykorzystujemy dodatkowe informacje o użytkownikach. Bazując na rozwiązaniu z \cite{MovieRecommendationusingRandomWalksovertheContextualGraph} do modelu dodano dodatkowe informacje w postaci 8 tagów:
 \begin{itemize}
     \item algorytmy,
     \item bezpieczeństwo komputerowe,
@@ -34,7 +34,7 @@ Zostały one następnie przypisane do konkretnych osób odpowiadającej tematyce
 \section{Mechanizm działania systemu rekomendacji}
 
 
-Powstałe zależności zapamietujemy przy pomocy grafu nieskierowanego, gdzie nasze tagi pewnią role specjalnych wierzchołków zwiększających zależność między użytkownikami. 
+Powstałe zależności zapamiętujemy przy pomocy grafu nieskierowanego, gdzie nasze tagi pewnią role specjalnych wierzchołków zwiększających zależność między użytkownikami. 
 
 Aby mówić o spacerze musimy jednak najpierw zdefiniować jak będziemy się po nim poruszać, pojedynczy krok na naszym grafie przebiega następująco: z pewnym prawdopodobieństwem wylosuj tag, do którego przypisany jest naukowiec lub jednego z jego sąsiadów i zwróć go.
 
